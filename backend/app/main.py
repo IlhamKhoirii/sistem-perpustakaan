@@ -1,14 +1,14 @@
 from fastapi import FastAPI
 from app.database import Base, engine
-from app.routes import routes_auth, routes_user, routes_buku, routes_peminjaman, routes_review, routes_denda, routes_log
 
-# Inisialisasi database
+from app.routes import (
+    routes_auth, routes_user, routes_buku, routes_peminjaman,
+    routes_review, routes_denda, routes_log
+)
+
 Base.metadata.create_all(bind=engine)
+app = FastAPI(title="Sistem Peminjaman Buku")
 
-# Inisialisasi FastAPI
-app = FastAPI(title="Perpustakaan")
-
-# Register semua route
 app.include_router(routes_auth.router, prefix="/auth", tags=["Auth"])
 app.include_router(routes_user.router, prefix="/users", tags=["Users"])
 app.include_router(routes_buku.router, prefix="/buku", tags=["Buku"])
