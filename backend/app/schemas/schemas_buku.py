@@ -5,7 +5,7 @@ class BukuBase(BaseModel):
     judul: str
     penulis: Optional[str] = None
     penerbit: Optional[str] = None
-    tahun_terbit: Optional[str] = None
+    tahun_terbit: Optional[int] = None
     stok: Optional[int] = 1
     gambar: Optional[str] = None
     kategori_id: Optional[int] = None

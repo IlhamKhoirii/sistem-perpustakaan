@@ -15,16 +15,26 @@ router = APIRouter()
 # ---------------------------
 @router.post("/", response_model=schemas_peminjaman.PeminjamanResponse)
 def pinjam_buku(
-    peminjaman: schemas_peminjaman.PeminjamanCreate, db: Session = Depends(get_db), current_user = Depends(get_current_user)
+    peminjaman: schemas_peminjaman.PeminjamanCreate, 
+    db: Session = Depends(get_db), 
+    current_user = Depends(get_current_user)
 ):
     buku = db.query(models_buku.Buku).filter(models_buku.Buku.id == peminjaman.buku_id).first()
     if not buku or buku.stok < 1:
         raise HTTPException(status_code=400, detail="Buku tidak tersedia")
+    
     buku.stok -= 1
 
+    # Tentukan tanggal jatuh tempo otomatis (misalnya 7 hari dari pinjam)
+    tanggal_jatuh_tempo = peminjaman.tanggal_pinjam + timedelta(days=7)
+
     new_peminjaman = models_peminjaman.Peminjaman(
-        **peminjaman.dict(), user_id=current_user.id
+        buku_id=peminjaman.buku_id,
+        tanggal_pinjam=peminjaman.tanggal_pinjam,
+        tanggal_jatuh_tempo=tanggal_jatuh_tempo,
+        user_id=current_user.id
     )
+
     db.add(new_peminjaman)
     db.commit()
     db.refresh(new_peminjaman)

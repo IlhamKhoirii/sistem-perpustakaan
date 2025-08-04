@@ -9,16 +9,16 @@ class StatusEnum(str, Enum):
     telat = "telat"
 
 class PeminjamanBase(BaseModel):
-    user_id: int
     buku_id: int
     tanggal_pinjam: date
-    tanggal_jatuh_tempo: date
+    tanggal_jatuh_tempo: date | None = None  # optional, bisa diisi otomatis
 
 class PeminjamanCreate(PeminjamanBase):
     pass
 
 class PeminjamanResponse(PeminjamanBase):
     id: int
+    user_id: int
     tanggal_kembali: date | None = None
     status: StatusEnum
     denda: Decimal
